@@ -10,26 +10,75 @@ let words = [
 	"wellcode",
 ];
 
+let wordObjects = [
+	{
+		word: "above",
+		hint: "In a newspaper, the title of a story is usually a**** the story",
+	},
+	{
+		word: "cake",
+		hint: "A c*** is a type of (usually) sweet dessert which is baked.",
+	},
+	{
+		word: "party",
+		hint: "A p**** is a social gathering for celebration and recreation. Some are to celebrate a special day, person, or event.",
+	},
+	{
+		word: "game",
+		hint: "Can be a video or a board g***",
+	},
+	{
+		word: "garden",
+		hint: "A g***** is usually a piece of land that is used for growing flowers, trees, shrubs, and other plants.",
+	},
+	{
+		word: "peace",
+		hint: "P**** is a time without any fights or wars.",
+	},
+	{
+		word: "coding",
+		hint: "More formally known as programming",
+	},
+	{
+		word: "important",
+		hint: "major, critical, starts with the letter I",
+	},
+	{
+		word: "wellcode",
+		hint: "Programming mentorship program from Romania. Starts with W",
+	},
+];
+
+console.log(wordObjects[0].word);
+
 let getWordButton = document.getElementById("getWord");
 let wordPlacement = document.getElementById("wordPlacement");
 let buttonContainer = document.getElementById("buttonContainer");
 let playerGuess = document.getElementById("playerGuess");
 let numberOfChances = document.getElementById("numberOfChances");
 let helperDiv = document.getElementById("helper");
+let hintDiv = document.getElementById("hintDiv");
 
 getWordButton.addEventListener("click", (e) => {
-    playerGuess.disabled = false;
+	playerGuess.disabled = false;
+	playerGuess.placeholder = "Enter a letter";
 	startGame();
 });
 
 function startGame() {
 	if (buttonContainer.childElementCount > 1) {
 		playerGuess.value = "";
+		playerGuess.disabled = true;
 		window.location.reload();
 	} else {
 		getWordButton.innerHTML = "Retry";
-		let wordToGuess = generateWord(words);
-		console.log(wordToGuess);
+		let wordObject = generateWord();
+		console.log(wordObject);
+		let wordToGuess = wordObject.word;
+		let hint = wordObject.hint;
+		let hintAlert = generateAlert(hint);
+        hintAlert.classList.add("alert", "alert-success");
+        hintDiv.append(hintAlert);
 		let wordLength = wordToGuess.length;
 		for (let i = 0; i < wordLength; i++) {
 			wordPlacement.appendChild(generateBadge(i));
@@ -78,20 +127,7 @@ function startGame() {
 			}
 
 			if (chances === 0) {
-				numberOfChances.innerHTML = chances;
-				numberOfChances.classList.replace("text-warning", "text-danger");
-				checkLetterButton.disabled = true;
-				checkLetterButton.innerHTML = "Better luck next time";
-				checkLetterButton.classList.replace("btn-success", "btn-danger");
-				badges.forEach((badge) => {
-					if (badge.innerHTML === "_") {
-						badge.innerHTML = wordToGuess[Number.parseInt(badge.id)];
-						badge.classList.replace("bg-secondary", "bg-danger");
-					}
-				});
-				let alertDiv = generateAlert("I'm sorry, you do not have any more tries...");
-				alertDiv.classList.add("alert", "alert-danger", "pt-2");
-				helperDiv.prepend(alertDiv);
+				loseGame(badges, chances, checkLetterButton, wordToGuess);
 			}
 
 			if (guesses === wordSize) {
@@ -106,6 +142,23 @@ function startGame() {
 			playerGuess.value = "";
 		});
 	}
+}
+
+function loseGame(badges, chances, checkLetterButton, wordToGuess) {
+	numberOfChances.innerHTML = chances;
+	numberOfChances.classList.replace("text-warning", "text-danger");
+	checkLetterButton.disabled = true;
+	checkLetterButton.innerHTML = "Better luck next time";
+	checkLetterButton.classList.replace("btn-success", "btn-danger");
+	badges.forEach((badge) => {
+		if (badge.innerHTML === "_") {
+			badge.innerHTML = wordToGuess[Number.parseInt(badge.id)];
+			badge.classList.replace("bg-secondary", "bg-danger");
+		}
+	});
+	let alertDiv = generateAlert("I'm sorry, you do not have any more tries...");
+	alertDiv.classList.add("alert", "alert-danger", "pt-2");
+	helperDiv.prepend(alertDiv);
 }
 
 function generateAlert(message) {
@@ -131,8 +184,8 @@ function generateBadge(id) {
 	return badge;
 }
 
-function generateWord(words) {
-	return words[generateNumber()];
+function generateWord() {
+	return wordObjects[generateNumber()];
 }
 
 function generateNumber() {
