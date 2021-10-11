@@ -49,7 +49,6 @@ let wordObjects = [
 	},
 ];
 
-console.log(wordObjects[0].word);
 
 let getWordButton = document.getElementById("getWord");
 let wordPlacement = document.getElementById("wordPlacement");
@@ -73,7 +72,6 @@ function startGame() {
 	} else {
 		getWordButton.innerHTML = "Retry";
 		let wordObject = generateWord();
-		console.log(wordObject);
 		let wordToGuess = wordObject.word;
 		let hint = wordObject.hint;
 		let hintAlert = generateAlert(hint);
